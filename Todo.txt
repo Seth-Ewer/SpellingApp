@@ -1,0 +1,28 @@
+TODO:
+
+Start the frontend layout
+	Pages for:
+		changing user
+		editing classes, lists, and words
+		attempting lists + results
+		viewing all student results per list
+
+Set up db to store data
+	users
+		student
+			progress on class/list/word
+		teacher
+			classes + students in charge of
+	classes
+		which users are in class
+		which lists are in class
+	lists
+		which words are in list
+	word
+		pronounciation
+		definition
+		example
+
+Set up endpoints to do tasks
+	request list data for attempt, push results after attempt
+	etc.
