@@ -20,7 +20,7 @@ export const testPageSlice = createSlice({
     selectors: {
         getCurrentScore: (state: TestPageState) => {
             return state.totalScore;
-        },
+        }
     }
 });
 

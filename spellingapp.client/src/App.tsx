@@ -1,32 +1,31 @@
-import { useState } from 'react';
 import './App.css';
 import LoginPage from './Pages/LoginPage/LoginPage';
 import TeacherMain from './Pages/TeacherMain/TeacherMain';
 import StudentMain from './Pages/StudentMain/StudentMain';
+import { getAttempt } from './Pages/LoginPage/LoginPage.slice';
+import { useAppSelector } from './State/hooks';
+import type { RootState } from './State/store';
 
 function App() {
 
-    const [userId, setUserId] = useState({
-        id: 0,
-        isTeacher: false,
-    });
+    const currentLogin = useAppSelector((state: RootState) => getAttempt(state));
 
-    if (userId.id == 0) {
+    if (currentLogin == "b:a") {
         return (
             <div>
-                <LoginPage setUserId={setUserId} />
+                <StudentMain />
             </div>
         );
-    } else if (userId.isTeacher == true) {
+    } else if (currentLogin == "a:b") {
         return (
             <div>
-                <TeacherMain userId={userId} />
+                <TeacherMain/>
             </div>
         );
     } else {
         return (
             <div>
-                <StudentMain userId={userId} />
+                <LoginPage />
             </div>
         );
     }

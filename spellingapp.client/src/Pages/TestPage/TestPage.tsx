@@ -4,8 +4,6 @@ import { increment, getCurrentScore } from './TestPage.slice';
 function TestPage() {
     const dispatch = useAppDispatch();
     dispatch(increment(42));
-
-    const score1 = useAppSelector((state: RootState) => state.testPage.totalScore);
     const score2 = useAppSelector((state: RootState) => getCurrentScore(state));
 
     return (
