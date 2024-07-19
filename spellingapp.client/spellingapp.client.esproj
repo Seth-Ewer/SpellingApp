@@ -11,10 +11,7 @@
   <ItemGroup>
     <Folder Include="src\Components\UnsavedChangesModal\" />
     <Folder Include="src\Components\SelectorModal\" />
-    <Folder Include="src\Pages\EditClassroom\" />
-    <Folder Include="src\Pages\EditStudent\" />
-    <Folder Include="src\Pages\TeacherMain\" />
-    <Folder Include="src\Pages\StudentMain\" />
+    <Folder Include="src\Pages\Student\" />
     <Folder Include="src\Pages\TestPage\" />
   </ItemGroup>
 </Project>

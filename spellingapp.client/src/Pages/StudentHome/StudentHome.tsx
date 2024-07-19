@@ -1,4 +1,4 @@
-function StudentMain() {
+function StudentHome() {
     return (
         <div>
             <div>
@@ -12,4 +12,4 @@ function StudentMain() {
     );
 }
 
-export default StudentMain;
+export default StudentHome;

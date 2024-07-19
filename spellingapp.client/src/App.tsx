@@ -1,7 +1,7 @@
 import './App.css';
 import LoginPage from './Pages/LoginPage/LoginPage';
-import TeacherMain from './Pages/TeacherMain/TeacherMain';
-import StudentMain from './Pages/StudentMain/StudentMain';
+import TeacherHome from './Pages/TeacherHome/TeacherHome';
+import StudentHome from './Pages/StudentHome/StudentHome';
 import { getAttempt } from './Pages/LoginPage/LoginPage.slice';
 import { useAppSelector } from './State/hooks';
 import type { RootState } from './State/store';
@@ -13,13 +13,13 @@ function App() {
     if (currentLogin == "b:a") {
         return (
             <div>
-                <StudentMain />
+                <StudentHome />
             </div>
         );
     } else if (currentLogin == "a:b") {
         return (
             <div>
-                <TeacherMain/>
+                <TeacherHome/>
             </div>
         );
     } else {

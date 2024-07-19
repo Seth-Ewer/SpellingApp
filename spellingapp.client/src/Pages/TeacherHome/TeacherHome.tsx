@@ -1,5 +1,5 @@
 import { useState } from 'react';
-function TeacherMain() {
+function TeacherHome() {
 
     const [itemsDisplayed, setItemsDisplayed] = useState("");
 
@@ -31,4 +31,4 @@ function TeacherMain() {
     );
 }
 
-export default TeacherMain;
+export default TeacherHome;
