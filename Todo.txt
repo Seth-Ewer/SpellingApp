@@ -26,3 +26,7 @@ Set up db to store data
 Set up endpoints to do tasks
 	request list data for attempt, push results after attempt
 	etc.
+
+
+
+TODO: Handle removing grades for lists, classes, students that don't exist anymore

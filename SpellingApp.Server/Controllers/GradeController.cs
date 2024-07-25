@@ -2,50 +2,46 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SpellingApp.Server.Models;
-using System.Reflection;
 
 namespace SpellingApp.Server.Controllers
 {
-    [Route("api/students")]
+    [Route("api/grades")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class GradeController : ControllerBase
     {
-        public StudentController()
+        public GradeController()
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
-                col.EnsureIndex(x => x.Name);
+                var col = db.GetCollection<Grade>();
+                col.EnsureIndex(x => x.StudentId);
             }
         }
 
         [HttpPost]
-        public ActionResult<Student> Create(Student model)
+        public ActionResult<Grade> Create(Grade model)
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
-                //TODO: Validate model fields
-                //TODO: Ensure record not already present
+                var col = db.GetCollection<Grade>();
                 col.Insert(model);
                 return this.Ok(model);
             }
         }
 
         [HttpPut]
-        public ActionResult<Student> Update(Student model)
+        public ActionResult<Grade> Update(Grade model)
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Grade>();
                 var record = col.FindById(model.Id);
                 if (record != null)
                 {
-                    record.Name = model.Name;
-                    record.ClassroomIds = model.ClassroomIds;
-                    //TODO: Make sure to copy all fields
+                    record.Scores = model.Scores;
+                    record.Date = model.Date;
                     col.Update(record);
-                    return this.Ok(record);
+                    return this.Ok(model);
                 }
                 else
                 {
@@ -55,11 +51,11 @@ namespace SpellingApp.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<Student> GetById(int id)
+        public ActionResult<Grade> GetById(int id)
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Grade>();
                 var result = col.FindById(id);
                 if (result == null)
                     return this.NotFound(id);
@@ -68,19 +64,22 @@ namespace SpellingApp.Server.Controllers
         }
 
         [HttpGet]
-        public List<Student> Search([FromQuery] string? term, [FromQuery] Guid? classroomId, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
+        public List<Grade> Search([FromQuery] Guid? studentId, [FromQuery] Guid? classroomId, [FromQuery] Guid? testId, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Grade>();
                 var results = col.Query();
 
-                if (!string.IsNullOrEmpty(term))
-                    results = results.Where(x => x.Name.Contains(term!));
-                if (classroomId.HasValue) results = results.Where(x => x.ClassroomIds.Contains(classroomId.Value));
+                if (classroomId != null)
+                    results = results.Where(x => x.ClassroomId == classroomId);
+                if (testId != null)
+                    results = results.Where(x => x.TestId == testId);
+                if (studentId != null)
+                    results = results.Where(x => x.StudentId == studentId);
 
-                results = (ILiteQueryable<Student>)results
-                    .OrderBy(x => x.Name)
+                results = (ILiteQueryable<Grade>)results
+                    .OrderBy(x => x.Date)
                     .Skip(offset)
                     .Limit(limit);
 
@@ -93,10 +92,11 @@ namespace SpellingApp.Server.Controllers
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Grade>();
                 var result = col.Delete(id);
-                if (result) return this.NoContent();
-                else return this.NotFound(id);
+                if(result)
+                    return this.NoContent();
+                return this.NotFound(id);
             }
         }
     }

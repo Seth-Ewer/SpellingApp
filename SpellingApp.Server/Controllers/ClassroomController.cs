@@ -9,12 +9,12 @@ namespace SpellingApp.Server.Controllers
     [ApiController]
     public class ClassroomController : ControllerBase
     {
-        // public ClassroomController() {
-        //     using (var db = new LiteDatabase(@"database.db")) {
-        //         var col = db.GetCollection<Classroom>();
-        //         col.EnsureIndex(x => x.Name);
-        //     }
-        // }
+        public ClassroomController() {
+            using (var db = new LiteDatabase(@"database.db")) {
+                var col = db.GetCollection<Classroom>();
+                col.EnsureIndex(x => x.Name);
+            }
+        }
 
         [HttpPost]
         public Classroom Create(Classroom model) {
@@ -27,6 +27,28 @@ namespace SpellingApp.Server.Controllers
             }
             //TODO: Ensure all fields updated with values from database
             return model;
+        }
+
+        [HttpPut]
+        public ActionResult<Classroom> Update(Classroom model)
+        {
+            using (var db = new LiteDatabase(@"database.db"))
+            {
+                var col = db.GetCollection<Classroom>();
+                var record = col.FindById(model.Id);
+                if (record != null)
+                {
+                    record.Name = model.Name;
+                    record.TestIds = model.TestIds;
+                    //TODO: Make sure to copy all fields
+                    col.Update(record);
+                    return this.Ok(record);
+                }
+                else
+                {
+                    return this.NotFound(model);
+                }
+            }
         }
 
         [HttpGet]
@@ -42,34 +64,8 @@ namespace SpellingApp.Server.Controllers
             }
         }
 
-        [HttpPut]
-        public ActionResult<Classroom> Update(Classroom model) {
-            using (var db = new LiteDatabase(@"database.db"))
-            {
-                var col = db.GetCollection<Classroom>();
-                var record = col.FindById(model.Id);
-                record.Name = model.Name;
-                //TODO: Make sure to copy all fields
-                col.Update(record);
-                return this.Ok(record);
-            }
-        }
-
-        [HttpDelete]
-        [Route("{id}")]
-        public ActionResult Delete(Guid id) {
-            using (var db = new LiteDatabase(@"database.db"))
-            {
-                var col = db.GetCollection<Classroom>();
-                var result = col.Delete(id);
-                if (result) return this.NoContent();
-                else return this.NotFound(id);
-            }
-        }
-
         [HttpGet]
-        public List<Classroom> Search(
-            [FromQuery] string? term, [FromQuery] Guid? testId, [FromQuery] int limit=25, [FromQuery] int offset=0)
+        public List<Classroom> Search([FromQuery] string? term, [FromQuery] Guid? testId, [FromQuery] int limit=25, [FromQuery] int offset=0)
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
@@ -88,6 +84,18 @@ namespace SpellingApp.Server.Controllers
                 return results.ToList();
             }
 
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public ActionResult Delete(Guid id) {
+            using (var db = new LiteDatabase(@"database.db"))
+            {
+                var col = db.GetCollection<Classroom>();
+                var result = col.Delete(id);
+                if (result) return this.NoContent();
+                else return this.NotFound(id);
+            }
         }
 
     }

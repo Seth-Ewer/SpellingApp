@@ -6,46 +6,46 @@ using System.Reflection;
 
 namespace SpellingApp.Server.Controllers
 {
-    [Route("api/students")]
+    [Route("api/words")]
     [ApiController]
-    public class StudentController : ControllerBase
+    public class WordController : ControllerBase
     {
-        public StudentController()
+        public WordController()
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Word>();
                 col.EnsureIndex(x => x.Name);
             }
         }
 
         [HttpPost]
-        public ActionResult<Student> Create(Student model)
+        public ActionResult<Word> Create(Word model)
         {
+
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
-                //TODO: Validate model fields
-                //TODO: Ensure record not already present
+                var col = db.GetCollection<Word>();
                 col.Insert(model);
                 return this.Ok(model);
             }
         }
 
         [HttpPut]
-        public ActionResult<Student> Update(Student model)
+        public ActionResult<Word> Update(Word model)
         {
+
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+
+                var col = db.GetCollection<Word>();
                 var record = col.FindById(model.Id);
                 if (record != null)
                 {
                     record.Name = model.Name;
-                    record.ClassroomIds = model.ClassroomIds;
-                    //TODO: Make sure to copy all fields
+                    record.Description = model.Description;
                     col.Update(record);
-                    return this.Ok(record);
+                    return this.Ok(model);
                 }
                 else
                 {
@@ -55,31 +55,35 @@ namespace SpellingApp.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<Student> GetById(int id)
+        public ActionResult<Word> GetById(int id)
         {
+
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
-                var result = col.FindById(id);
-                if (result == null)
+                var col = db.GetCollection<Word>();
+                var record = col.FindById(id);
+                if (record == null)
                     return this.NotFound(id);
-                return this.Ok(result);
+                return this.Ok(record);
             }
         }
 
         [HttpGet]
-        public List<Student> Search([FromQuery] string? term, [FromQuery] Guid? classroomId, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
+        public List<Word> Search([FromQuery] string? term, [FromQuery] List<Guid> ids, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
         {
+
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
+                var col = db.GetCollection<Word>();
                 var results = col.Query();
 
                 if (!string.IsNullOrEmpty(term))
                     results = results.Where(x => x.Name.Contains(term!));
-                if (classroomId.HasValue) results = results.Where(x => x.ClassroomIds.Contains(classroomId.Value));
 
-                results = (ILiteQueryable<Student>)results
+                if(ids.Count > 0)
+                    results = results.Where(x => ids.Contains(x.Id));
+
+                results = (ILiteQueryable<Word>)results
                     .OrderBy(x => x.Name)
                     .Skip(offset)
                     .Limit(limit);
@@ -93,10 +97,11 @@ namespace SpellingApp.Server.Controllers
         {
             using (var db = new LiteDatabase(@"database.db"))
             {
-                var col = db.GetCollection<Student>();
-                var result = col.Delete(id);
-                if (result) return this.NoContent();
-                else return this.NotFound(id);
+                var col = db.GetCollection<Word>();
+                var results = col.Delete(id);
+                if(results == false)
+                    return this.NotFound(id);
+                return this.NoContent();
             }
         }
     }

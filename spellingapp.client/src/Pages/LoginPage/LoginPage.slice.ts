@@ -4,13 +4,13 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 export interface LoginPageState {
     username: string,
     password: string,
-    loginAttempt: string
+    currentUser: string
 }
 
 const initialState: LoginPageState = {
     username: "Username",
     password: "Password",
-    loginAttempt: ""
+    currentUser: ""
 }
 
 export const loginPageSlice = createSlice({
@@ -23,8 +23,8 @@ export const loginPageSlice = createSlice({
         setPassword: (state, action: PayloadAction<string>) => {
             state.password = action.payload;
         },
-        setAttempt: (state, action: PayloadAction<string>) => {
-            state.loginAttempt = action.payload;
+        setUser: (state, action: PayloadAction<string>) => {
+            state.currentUser = action.payload;
         }
     },
     selectors: {
@@ -34,13 +34,13 @@ export const loginPageSlice = createSlice({
         getPassword: (state: LoginPageState) => {
             return state.password;
         },
-        getAttempt: (state: LoginPageState) => {
-            return state.loginAttempt;
+        getUser: (state: LoginPageState) => {
+            return state.currentUser;
         }
     }
 });
 
-export const { setUsername, setPassword, setAttempt } = loginPageSlice.actions;
-export const { getUsername, getPassword, getAttempt } = loginPageSlice.selectors;
+export const { setUsername, setPassword, setUser } = loginPageSlice.actions;
+export const { getUsername, getPassword, getUser } = loginPageSlice.selectors;
 
 export default loginPageSlice.reducer;

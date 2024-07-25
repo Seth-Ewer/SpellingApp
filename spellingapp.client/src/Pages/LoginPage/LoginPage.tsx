@@ -1,6 +1,6 @@
 import type { RootState } from '../../State/store';
 import { useAppDispatch, useAppSelector } from '../../State/hooks';
-import { setUsername, setPassword, setAttempt, getUsername, getPassword } from './LoginPage.slice';
+import { setUsername, setPassword, setUser, getUsername, getPassword } from './LoginPage.slice';
 function LoginPage() {
 
     const dispatch = useAppDispatch();
@@ -9,7 +9,7 @@ function LoginPage() {
     const password = useAppSelector((state: RootState) => getPassword(state));
 
     const handleSubmit = () => {
-        dispatch(setAttempt(username + ":" + password));
+        dispatch(setUser(username + ":" + password));
     }
 
     return (
