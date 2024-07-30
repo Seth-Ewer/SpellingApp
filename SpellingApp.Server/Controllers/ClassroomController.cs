@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SpellingApp.Server.Infrastructure;
 using SpellingApp.Server.Models;
 
 namespace SpellingApp.Server.Controllers
@@ -10,15 +11,15 @@ namespace SpellingApp.Server.Controllers
     public class ClassroomController : ControllerBase
     {
         public ClassroomController() {
-            using (var db = new LiteDatabase(@"database.db")) {
+            using (var db = LiteDbFactory.OpenConnection()) {
                 var col = db.GetCollection<Classroom>();
                 col.EnsureIndex(x => x.Name);
             }
         }
 
         [HttpPost]
-        public Classroom Create(Classroom model) {
-            using (var db = new LiteDatabase(@"database.db"))
+        public ActionResult<Classroom> Create(Classroom model) {
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Classroom>();
                 //TODO: Validate model fields
@@ -26,16 +27,17 @@ namespace SpellingApp.Server.Controllers
                 col.Insert(model);
             }
             //TODO: Ensure all fields updated with values from database
-            return model;
+            return this.Ok(model);
         }
 
+        [Route("{id:Guid}")]
         [HttpPut]
-        public ActionResult<Classroom> Update(Classroom model)
+        public ActionResult<Classroom> Update(Guid id, Classroom model)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Classroom>();
-                var record = col.FindById(model.Id);
+                var record = col.FindById(id);
                 if (record != null)
                 {
                     record.Name = model.Name;
@@ -46,15 +48,15 @@ namespace SpellingApp.Server.Controllers
                 }
                 else
                 {
-                    return this.NotFound(model);
+                    return this.NotFound(id);
                 }
             }
         }
 
-        [HttpGet]
         [Route("{id}")]
+        [HttpGet]
         public ActionResult<Classroom> Get(Guid id) {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Classroom>();
                 var result = col.FindById(id);
@@ -67,7 +69,7 @@ namespace SpellingApp.Server.Controllers
         [HttpGet]
         public List<Classroom> Search([FromQuery] string? term, [FromQuery] Guid? testId, [FromQuery] int limit=25, [FromQuery] int offset=0)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Classroom>();
                 var results = col.Query();
@@ -86,10 +88,10 @@ namespace SpellingApp.Server.Controllers
 
         }
 
-        [HttpDelete]
         [Route("{id}")]
+        [HttpDelete]
         public ActionResult Delete(Guid id) {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Classroom>();
                 var result = col.Delete(id);

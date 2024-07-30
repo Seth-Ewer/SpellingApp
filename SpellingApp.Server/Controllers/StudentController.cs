@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SpellingApp.Server.Infrastructure;
 using SpellingApp.Server.Models;
 using System.Reflection;
 
@@ -12,7 +13,7 @@ namespace SpellingApp.Server.Controllers
     {
         public StudentController()
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
                 col.EnsureIndex(x => x.Name);
@@ -22,7 +23,7 @@ namespace SpellingApp.Server.Controllers
         [HttpPost]
         public ActionResult<Student> Create(Student model)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
                 //TODO: Validate model fields
@@ -32,13 +33,14 @@ namespace SpellingApp.Server.Controllers
             }
         }
 
+        [Route("{id:Guid}")]
         [HttpPut]
-        public ActionResult<Student> Update(Student model)
+        public ActionResult<Student> Update(Guid id, Student model)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
-                var record = col.FindById(model.Id);
+                var record = col.FindById(id);
                 if (record != null)
                 {
                     record.Name = model.Name;
@@ -49,15 +51,15 @@ namespace SpellingApp.Server.Controllers
                 }
                 else
                 {
-                    return this.NotFound(model);
+                    return this.NotFound(id);
                 }
             }
         }
-
+        [Route("{id:Guid}")]
         [HttpGet]
-        public ActionResult<Student> GetById(int id)
+        public ActionResult<Student> GetById(Guid id)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
                 var result = col.FindById(id);
@@ -66,11 +68,10 @@ namespace SpellingApp.Server.Controllers
                 return this.Ok(result);
             }
         }
-
         [HttpGet]
         public List<Student> Search([FromQuery] string? term, [FromQuery] Guid? classroomId, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
                 var results = col.Query();
@@ -88,10 +89,11 @@ namespace SpellingApp.Server.Controllers
             }
         }
 
+        [Route("{id:Guid}")]
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Student>();
                 var result = col.Delete(id);

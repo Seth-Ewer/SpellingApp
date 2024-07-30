@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SpellingApp.Server.Infrastructure;
 using SpellingApp.Server.Models;
 using System.Reflection;
 
@@ -12,7 +13,7 @@ namespace SpellingApp.Server.Controllers
     {
         public WordController()
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Word>();
                 col.EnsureIndex(x => x.Name);
@@ -23,7 +24,7 @@ namespace SpellingApp.Server.Controllers
         public ActionResult<Word> Create(Word model)
         {
 
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Word>();
                 col.Insert(model);
@@ -31,15 +32,16 @@ namespace SpellingApp.Server.Controllers
             }
         }
 
+        [Route("{id:Guid}")]
         [HttpPut]
-        public ActionResult<Word> Update(Word model)
+        public ActionResult<Word> Update(Guid id, Word model)
         {
 
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
 
                 var col = db.GetCollection<Word>();
-                var record = col.FindById(model.Id);
+                var record = col.FindById(id);
                 if (record != null)
                 {
                     record.Name = model.Name;
@@ -49,16 +51,17 @@ namespace SpellingApp.Server.Controllers
                 }
                 else
                 {
-                    return this.NotFound(model);
+                    return this.NotFound(id);
                 }
             }
         }
 
+        [Route("{id:Guid}")]
         [HttpGet]
-        public ActionResult<Word> GetById(int id)
+        public ActionResult<Word> GetById(Guid id)
         {
 
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Word>();
                 var record = col.FindById(id);
@@ -72,7 +75,7 @@ namespace SpellingApp.Server.Controllers
         public List<Word> Search([FromQuery] string? term, [FromQuery] List<Guid> ids, [FromQuery] int limit = 25, [FromQuery] int offset = 0)
         {
 
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Word>();
                 var results = col.Query();
@@ -92,10 +95,11 @@ namespace SpellingApp.Server.Controllers
             }
         }
 
+        [Route("{id:Guid}")]
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
-            using (var db = new LiteDatabase(@"database.db"))
+            using (var db = LiteDbFactory.OpenConnection())
             {
                 var col = db.GetCollection<Word>();
                 var results = col.Delete(id);
