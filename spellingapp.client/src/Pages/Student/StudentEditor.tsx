@@ -1,4 +1,4 @@
-function EditStudent() {
+function StudentEditor() {
     return (
         <div>
             <div>
@@ -18,4 +18,4 @@ function EditStudent() {
     );
 }
 
-export default EditStudent;
+export default StudentEditor;

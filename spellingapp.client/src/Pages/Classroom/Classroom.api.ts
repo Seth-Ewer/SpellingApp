@@ -18,6 +18,13 @@ export const classroomApi = createApi({
             }),
             //invalidatesTags: ['classrooms']
         }),
+        updateClassroom: builder.mutation<Classroom, Partial<Classroom>>({
+            query: (body) => ({
+                url: `/${body.id}`,
+                method: 'POST',
+                body
+            })
+        })
     }),
 })
 

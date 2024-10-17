@@ -33,7 +33,7 @@ export const ClassroomSlice = createSlice({
         builder.addMatcher(
             classroomApi.endpoints.getClassroom.matchFulfilled,
             (state, action) => {
-                var index = state.classrooms.findIndex(x => x.id == action.payload.id);
+                const index = state.classrooms.findIndex(x => x.id == action.payload.id);
                 if (index == -1)
                     state.classrooms.push(action.payload);
                 else
