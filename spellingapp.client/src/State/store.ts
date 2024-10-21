@@ -4,7 +4,7 @@ import loginPage from '../Pages/LoginPage/LoginPage.slice';
 import classroom from '../Pages/Classroom/Classroom.slice';
 import student from '../Pages/Student/Student.slice';
 import { classroomApi } from '../Pages/Classroom/Classroom.api';
-import 
+import { studentApi } from '../Pages/Student/Student.api';
 
 export const store = configureStore({
     reducer: {
@@ -12,9 +12,9 @@ export const store = configureStore({
         loginPage,
         classroom,
         student,
-        [classroomApi.reducerPath]: classroomApi.reducer
-    },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(classroomApi.middleware)
+        [classroomApi.reducerPath]: classroomApi.reducer,
+        [studentApi.reducerPath]: studentApi.reducer
+    }
 });
 
 export type RootState = ReturnType<typeof store.getState>;
