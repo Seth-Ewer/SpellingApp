@@ -1,17 +1,30 @@
-import { useGetClassroomQuery } from "./Classroom.api";
+import { Classroom } from "./Classroom.slice";
+import { getList } from "./Classroom.slice";
+import { addClass } from "./Classroom.slice";
+import { useSelector } from 'react-redux';
 
 function ClassroomEditor() {
 
-    const { data, error, isLoading } = useGetClassroomQuery("3fa85f64-5717-4562-b3fc-2c963f66afa7");
-
+    const tempClassroom =
+    {
+        id: "",
+        name: "New Classroom",
+        tests: new Array<string>
+    } as Classroom;
 
     return (
         <div>
             <div>
-                Selector (Students, Tests)
-                Data: {JSON.stringify(data)}
-                Error: {error?.toString()}
-                Loading: {isLoading}
+                {useSelector(getList).map((x) => {
+                    return (
+                        <div key={x.id}>
+                            <p>ID: {x.id}</p>
+                            <p>Name: {x.name}</p>
+                            <p># of Tests: {x.tests.length}</p>
+                        </div>
+                    )
+                })}
+                <button onClick={() => addClass(tempClassroom)}>Click here to add a new thing to the state.</button>
             </div>
 
             <div>

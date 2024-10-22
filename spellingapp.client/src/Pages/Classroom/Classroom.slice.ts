@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { classroomApi } from './Classroom.api';
+import {  } from "immer";
 
 export interface Classroom {
     id: string,
@@ -19,14 +20,12 @@ export const ClassroomSlice = createSlice({
     name: 'classroom',
     initialState,
     reducers: {
-        /*refreshState: (state) => {
-
+        resetState: (state, action: PayloadAction<Array<Classroom>>) => {
+            state.classrooms.splice(0, state.classrooms.length);
+            action.payload.forEach(x => state.classrooms.push(x));
         },
-        saveState: (state) => {
-
-        },*/
         addClass: (state, action: PayloadAction<Classroom>) => {
-            state.classrooms = state.classrooms.concat([action.payload]);
+            state.classrooms.push(action.payload);
         }
     },
     extraReducers: (builder) => {
@@ -50,5 +49,6 @@ export const ClassroomSlice = createSlice({
 
 export const { addClass } = ClassroomSlice.actions;
 export const { getList } = ClassroomSlice.selectors;
+export const { resetState } = ClassroomSlice.actions;
 
 export default ClassroomSlice.reducer;

@@ -14,7 +14,9 @@ export const store = configureStore({
         student,
         [classroomApi.reducerPath]: classroomApi.reducer,
         [studentApi.reducerPath]: studentApi.reducer
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(classroomApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

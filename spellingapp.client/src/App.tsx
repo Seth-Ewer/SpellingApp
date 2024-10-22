@@ -11,7 +11,7 @@ import StudentEditor from './Pages/Student/StudentEditor';
 function App() {
 
     return (
-        <StudentEditor/>
+        <ClassroomEditor />
     );
 }
 

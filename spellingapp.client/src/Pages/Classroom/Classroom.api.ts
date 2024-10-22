@@ -9,7 +9,13 @@ export const classroomApi = createApi({
         getClassroom: builder.query<Classroom, string>({
             query: (id) => `${id}`,
             //providesTags: ["classrooms"]
-        }), 
+        }),
+        getClassrooms: builder.query<Array<Classroom>, void>({
+            query: () => ({
+                url: '/',
+                method: 'GET'
+            })
+        }),
         createClassroom: builder.mutation<Classroom, Partial<Classroom>>({
             query: (body) => ({
                 url: '/',
@@ -30,4 +36,4 @@ export const classroomApi = createApi({
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useCreateClassroomMutation, useGetClassroomQuery } = classroomApi;
+export const { useCreateClassroomMutation, useGetClassroomQuery, useGetClassroomsQuery } = classroomApi;
