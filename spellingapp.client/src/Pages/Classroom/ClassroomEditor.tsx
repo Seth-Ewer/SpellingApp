@@ -1,30 +1,41 @@
-import { Classroom } from "./Classroom.slice";
-import { getList } from "./Classroom.slice";
-import { addClass } from "./Classroom.slice";
-import { useSelector } from 'react-redux';
+import type { RootState } from '../../State/store';
+import { Classroom, getList, getLoading, addClass, setLoading } from "./Classroom.slice";
+import { useAppDispatch, useAppSelector } from '../../State/hooks';
+import { useGetClassroomsQuery } from './Classroom.api';
+import { useEffect } from "react";
 
 function ClassroomEditor() {
 
-    const tempClassroom =
-    {
-        id: "",
-        name: "New Classroom",
-        tests: new Array<string>
-    } as Classroom;
+    const classrooms = useAppSelector((state: RootState) => getList(state));
+    const isMakingApiCall = useAppSelector((state: RootState) => getLoading(state));
+    const { data, error, isLoading } = useGetClassroomsQuery();
+
+    const DisplayThing = () => {
+        return (
+            <div>
+                {
+                    classrooms.map((a) => {
+                        return <div>{a.name}</div>
+                    })
+                }
+            </div>
+        )
+    }
+
+    /*
+    const SaveClassrooms = () => {
+        return (
+            <button onClick={() => useAppDispatch((state: RootState) => setLoading("save"))}>Click here to add a new thing to the state.</button>
+        );
+
+    }
+                {SaveClassrooms()}
+    */
 
     return (
         <div>
             <div>
-                {useSelector(getList).map((x) => {
-                    return (
-                        <div key={x.id}>
-                            <p>ID: {x.id}</p>
-                            <p>Name: {x.name}</p>
-                            <p># of Tests: {x.tests.length}</p>
-                        </div>
-                    )
-                })}
-                <button onClick={() => addClass(tempClassroom)}>Click here to add a new thing to the state.</button>
+                {DisplayThing()}
             </div>
 
             <div>

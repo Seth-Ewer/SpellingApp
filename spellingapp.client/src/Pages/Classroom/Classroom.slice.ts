@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { classroomApi } from './Classroom.api';
-import {  } from "immer";
 
 export interface Classroom {
     id: string,
@@ -9,11 +8,13 @@ export interface Classroom {
     tests: Array<string>
 }
 export interface ClassroomState {
-    classrooms: Array<Classroom>
+    classrooms: Array<Classroom>,
+    loading: string
 }
 
 const initialState: ClassroomState = {
-    classrooms: []
+    classrooms: [],
+    loading: ""
 }
 
 export const ClassroomSlice = createSlice({
@@ -26,6 +27,9 @@ export const ClassroomSlice = createSlice({
         },
         addClass: (state, action: PayloadAction<Classroom>) => {
             state.classrooms.push(action.payload);
+        },
+        setLoading: (state, action: PayloadAction<string>) => {
+            state.loading = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -38,17 +42,32 @@ export const ClassroomSlice = createSlice({
                 else
                     state.classrooms.splice(index, 1, action.payload);
             }
+        ),
+        builder.addMatcher(
+            classroomApi.endpoints.getClassrooms.matchFulfilled,
+            (state, action) => {
+                //Empty state
+                state.classrooms = [];
+                //Fill state
+                action.payload.forEach((item) => state.classrooms.push(item));
+            }
         )
+
     },
     selectors: {
         getList: (state: ClassroomState) => {
             return state.classrooms;
+        },
+        getLoading: (state: ClassroomState) => {
+            return state.loading;
         }
     }
 });
 
 export const { addClass } = ClassroomSlice.actions;
-export const { getList } = ClassroomSlice.selectors;
 export const { resetState } = ClassroomSlice.actions;
+export const { setLoading } = ClassroomSlice.actions;
+export const { getList } = ClassroomSlice.selectors;
+export const { getLoading } = ClassroomSlice.selectors;
 
 export default ClassroomSlice.reducer;
