@@ -9,6 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\Components\NavigationHeader\" />
     <Folder Include="src\Components\UnsavedChangesModal\" />
     <Folder Include="src\Components\SelectorModal\" />
     <Folder Include="src\Pages\TestPage\" />
